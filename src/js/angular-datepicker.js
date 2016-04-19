@@ -331,8 +331,15 @@
           , unregisterDataSetWatcher = $scope.$watch('dateSet', function dateSetWatcher(newValue) {
 
             if (newValue) {
-
-              date = new Date($filter('date')(new Date(newValue), attr.dateFormat));
+              if (attr.dateFormat.match(/dd[.*]{1}MM[.*]{1}yyyy/)) {
+                var parsedDate = newValue.match(/([\d]{2})[.*]{1}([\d]{2})[.*]{1}([\d]{4})/);
+                if (parsedDate && parsedDate.length === 3) {
+                  newValue = parsedDate[3] + '-' + parsedDate[2] + '-' + parsedDate[1];
+                }
+                date = new Date(newValue);
+              } else {
+                date = new Date($filter('date')(new Date(newValue), attr.dateFormat));
+              }
 
               $scope.month = $filter('date')(date, 'MMMM');//december-November like
               $scope.monthNumber = Number($filter('date')(date, 'MM')); // 01-12 like
